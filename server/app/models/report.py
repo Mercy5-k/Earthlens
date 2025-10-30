@@ -74,7 +74,7 @@ class Report(BaseModel):
         }
 
         if include_author and hasattr(self, 'author'):
-            data['author'] = self.author.to_dict()
+            data['user'] = self.author.to_dict()
 
         if include_comments:
             data['comments'] = [comment.to_dict() for comment in self.comments.order_by('created_at')]
@@ -123,8 +123,7 @@ class Report(BaseModel):
     @classmethod
     def get_by_location(cls, latitude, longitude, radius_km=10):
         """Get reports within a radius of given coordinates"""
-        # Simple bounding box calculation (for more accuracy, use PostGIS)
-        lat_range = radius_km / 111.0  # Rough conversion
+        lat_range = radius_km / 111.0  
         import math
         lat_radians = math.radians(latitude)
         lng_range = radius_km / (111.0 * max(abs(math.cos(lat_radians)), 0.01))
