@@ -1,67 +1,127 @@
 .header {
   width: 100%;
-  height: 50px;
-  padding: 10px 5%;
+  height: 70px;
+  padding: 0 5%;
   background: rgb(255, 255, 255);
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: relative;
   flex-shrink: 0;
-  box-shadow: #000000;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
 }
 
-.logo-img {
+/* .logo-img {
   width: 40px;
   height: 40px;
-  margin-left: -92%;
-}
+  position: absolute;
+  left: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+} */
 
 .logo {
-  font-style: bold;
+  font-style: normal;
   color: #106111;
   font-weight: 700;
-  margin-left: -5%;
+  font-size: 18px;
+  line-height: 1.2;
+  margin-left: 50px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-left: auto;
 }
 
 .navbar a {
-  font-family: jost;
-  position: relative;
-  font-size: 20px;
+  font-family: jost, sans-serif;
+  font-size: 18px;
   color: rgb(0, 0, 0);
   font-weight: 500;
-  margin-left: 40px;
   text-decoration: none;
+  transition: color 0.3s ease;
+  white-space: nowrap;
 }
 
-.navbar a:last-child {
+.navbar a:hover {
+  color: #106111;
+}
+
+.navbar a:last-of-type {
   background: #106111;
   color: #ffffff;
-  padding: 6px 12px;
+  padding: 8px 16px;
   border-radius: 4px;
   transition: background-color 0.3s ease;
-  font-size: 16px;
+  font-size: 18px;
 }
 
-.navbar a:last-child:hover {
+.navbar a:last-of-type:hover {
   background: #0d4f0e;
+  color: #ffffff;
 }
 
 .sign-out-btn {
   background: #106111;
   color: #ffffff;
   border: none;
-  padding: 6px 12px;
+  padding: 8px 16px;
   border-radius: 4px;
   transition: background-color 0.3s ease;
-  font-size: 16px;
+  font-size: 18px;
   cursor: pointer;
-  font-family: jost;
+  font-family: jost, sans-serif;
   font-weight: 500;
-  margin-left: 40px;
+  white-space: nowrap;
+  height: auto;
+  line-height: normal;
 }
 
 .sign-out-btn:hover {
   background: #c82333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .navbar {
+    gap: 20px;
+  }
+  
+  .navbar a {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0 3%;
+  }
+  
+  .logo {
+    font-size: 16px;
+    margin-left: 45px;
+  }
+  
+  .logo-img {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .navbar {
+    gap: 15px;
+  }
+  
+  .navbar a {
+    font-size: 14px;
+  }
+  
+  .sign-out-btn {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
 }

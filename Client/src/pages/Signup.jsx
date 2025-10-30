@@ -85,7 +85,7 @@ const Signup = () => {
             type="text"
             id="username"
             name="username"
-            placeholder="Enter your username (letters, numbers, underscores only)"
+            placeholder=""
             value={username}
             onChange={(e) => setUsername(e.target.value.replace(/[^a-zA-Z0-9_]/g, ''))}
             required
@@ -96,7 +96,7 @@ const Signup = () => {
             type="email"
             id="email"
             name="email"
-            placeholder="you@example.com"
+            placeholder=""
             required
           />
 
@@ -105,7 +105,7 @@ const Signup = () => {
             type="password"
             id="password"
             name="password"
-            placeholder="Enter your password (min 8 chars, uppercase, lowercase, number)"
+            placeholder=""
             required
           />
 

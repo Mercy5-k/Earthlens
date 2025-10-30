@@ -19,7 +19,7 @@ const MyReportList = ({ reports, onEditReport, onDeleteReport, onViewDetails, lo
         <article key={report.id} className="card">
           <div className="image-section">
             <img
-              src={report.image_url ? `http://localhost:5003${report.image_url}` : '/placeholder.png'}
+              src={report.image_url ? `http://localhost:5001${report.image_url}` : '/placeholder.png'}
               alt={report.title}
               onError={(e) => { e.target.src = '/placeholder.png'; }}
             />
@@ -30,7 +30,7 @@ const MyReportList = ({ reports, onEditReport, onDeleteReport, onViewDetails, lo
               <button className="meta-btn">{report.ai_category || 'Uncategorized'}</button>
               <button className="meta-btn">{report.location}</button>
               <button className="meta-btn">{new Date(report.created_at).toLocaleDateString()}</button>
-              <button className="meta-btn">Reported by {report.reporter || 'Anonymous'}</button>
+              <button className="meta-btn">Reported by {report.user?.username || 'Anonymous'}</button>
             </div>
             <p>{report.description}</p>
             {showEditDelete && report.ai_advice && (

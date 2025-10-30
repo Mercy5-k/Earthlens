@@ -15,7 +15,7 @@
 }
 
 .signup-box h2 {
-  color: #fff;
+  color: #FFFFFF;
   font-size: 1.5rem;
   font-weight: 600;
   margin-bottom: 2rem;
@@ -28,7 +28,7 @@
 }
 
 .signup-box label {
-  color: #fff;
+  color: #FFFFFF;
   font-weight: 500;
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
@@ -39,7 +39,7 @@
   padding: 0.8rem 1rem;
   border: none;
   border-radius: 8px;
-  background-color: #fbe9e7;
+  background-color: #FFFFFF;
   margin-bottom: 1.2rem;
   font-size: 1rem;
   outline: none;
@@ -47,7 +47,7 @@
 
 .signup-btn {
   width: 100%;
-  background-color: #fbe9e7;
+  background-color: #FFFFFF;
   color: #0b4f1a;
   border: none;
   border-radius: 8px;

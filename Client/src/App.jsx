@@ -4,10 +4,14 @@ import {
   Routes,
   Route,
   useLocation,
+  Outlet,
+  Navigate
 } from "react-router-dom";
 
 import Navbar from "./components/Navbar/Navbar.jsx";
 import Footer from "./components/Footer/Footer.jsx";
+import Sidebar from "./components/Sidebar/Sidebar";
+
 import Report from "./pages/Report.jsx";
 import GreenActions from "./pages/GreenActions.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
@@ -19,44 +23,80 @@ import MyReportspage from "./pages/MyReportspage.jsx";
 import Profile from "./pages/Profile.jsx";
 import Contact from "./pages/Contact.jsx";
 
+
+const DashboardLayout = () => (
+  <div style={{ display: "flex", minHeight: "100vh" }}>
+    <Sidebar />
+    <div style={{ flex: 1, padding: "20px" }}>
+      <Outlet />
+    </div>
+  </div>
+);
+
 const AppContent = () => {
   const location = useLocation();
-  const showFooterPages = ["/", "/about", "/contact"];
+  const isAuthenticated = !!localStorage.getItem("token");
+
+ 
+  const showFooterPages = ["/", "/about", "/contact", "/green-actions"];
   const shouldShowFooter = showFooterPages.includes(location.pathname);
-  const hideNavbarPages = ["/join", "/login"];
-  const authenticatedPages = ["/dashboard", "/report", "/my-reports", "/green-actions", "/profile"];
-  const token = localStorage.getItem("token");
-  const isAuthenticated = !!token;
-  const shouldShowNavbar = !hideNavbarPages.includes(location.pathname) && (!authenticatedPages.includes(location.pathname) || isAuthenticated);
+
+ 
+  const hideNavbarPages = ["/dashboard", "/report", "/my-reports", "/profile"];
+  const shouldShowNavbar = !hideNavbarPages.includes(location.pathname);
 
   return (
     <div className="app-container">
       {shouldShowNavbar && <Navbar />}
+
       <main className="main-content">
         <Routes>
+
+        
           <Route path="/" element={<LandingPage />} />
-          <Route path="/report" element={<Report />} />
-          <Route path="/green-actions" element={<GreenActions />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/join" element={<Signup />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/my-reports" element={<MyReportspage />} />
-          <Route path="/profile" element={<Profile />} />
+
+          
+          <Route
+            path="/green-actions"
+            element={isAuthenticated ? <GreenActions /> : <Navigate to="/login" />}
+          />
+
+    
+          <Route element={<DashboardLayout />}>
+            <Route
+              path="/dashboard"
+              element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/report"
+              element={isAuthenticated ? <Report /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/my-reports"
+              element={isAuthenticated ? <MyReportspage /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/profile"
+              element={isAuthenticated ? <Profile /> : <Navigate to="/login" />}
+            />
+          </Route>
+
         </Routes>
       </main>
+
       {shouldShowFooter && <Footer />}
     </div>
   );
 };
 
-const App = () => {
-  return (
-    <Router>
-      <AppContent />
-    </Router>
-  );
-};
+const App = () => (
+  <Router>
+    <AppContent />
+  </Router>
+);
 
 export default App;

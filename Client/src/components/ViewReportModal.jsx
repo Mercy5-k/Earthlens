@@ -139,7 +139,7 @@ const ViewReportModal = ({ report, isOpen, onClose }) => {
 
         <div className="view-modal-image">
           <img
-            src={report.image_url ? `http://localhost:5003${report.image_url}` : '/placeholder.png'}
+            src={report.image_url ? `http://localhost:5001${report.image_url}` : '/placeholder.png'}
             alt={report.title}
             onError={(e) => { e.target.src = '/placeholder.png'; }}
           />

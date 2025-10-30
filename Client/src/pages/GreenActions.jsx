@@ -19,7 +19,7 @@ const GreenActions = () => {
 
   const fetchGreenActions = async () => {
     try {
-      const response = await fetch("http://localhost:5003/api/ai/green-advice");
+      const response = await fetch("http://localhost:5001/api/ai/green-advice");
       if (response.ok) {
         const data = await response.json();
         setActions(data.actions);
@@ -36,7 +36,7 @@ const GreenActions = () => {
   const generateNewTask = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5003/api/ai/generate-task",
+        "http://localhost:5001/api/ai/generate-task",
         {
           method: "POST",
           headers: {
@@ -188,7 +188,6 @@ const GreenActions = () => {
         </div>
       </header>
 
-      {/* Completed Tasks Section */}
       {completedTasks.length > 0 && (
         <div className="completed-tasks-section">
           <h2>✅ Completed Tasks</h2>
@@ -232,10 +231,9 @@ const GreenActions = () => {
         </div>
       )}
 
-      {/* AI-Generated Task Section */}
       {currentTask && (
         <div className="current-task-section">
-          <h2>🌱 Your Daily Green Task</h2>
+          <h2> Your Daily Green Task</h2>
           <div className={`task-card ${taskCompleted ? "completed" : ""}`}>
             <div className="task-header">
               <h3>{currentTask.title}</h3>
