@@ -1,74 +1,81 @@
 import os
+from dotenv import load_dotenv
 from datetime import timedelta
+
+load_dotenv()
+
+# GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 
 class Config:
     """Base configuration"""
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Base paths
+    BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    INSTANCE_DIR = os.path.join(BASE_DIR, 'instance')
+    UPLOAD_FOLDER = os.path.join(BASE_DIR, 'app', 'static', 'uploads')
     
+    # BASE_DIR = os.path.abspath(os.path.dirname(__file__)) 
+    # INSTANCE_DIR = os.path.join(BASE_DIR, '..', 'instance')
+    # UPLOAD_FOLDER = os.path.join(BASE_DIR, '..', 'static', 'uploads')
+
+    # Database
+    # SQLALCHEMY_DATABASE_URI = os.getenv("postgresql://greenlens_db2_user:coM6K760W43QzIZ1kEVmm7bQctjYa3J8@dpg-d41ek4jipnbc73fanj4g-a.oregon-postgres.render.com/greenlens_db2",
+    #     "DATABASE_URI",
+    #     'sqlite:///' + os.path.join(INSTANCE_DIR, 'greenlens.db')
+    # )
+    # SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    _database_url = os.environ.get("DATABASE_URL")
+    if _database_url and _database_url.startswith("postgres://"):
+        _database_url = _database_url.replace("postgres://", "postgresql://", 1)
+    SQLALCHEMY_DATABASE_URI = _database_url or f"sqlite:///{os.path.join(INSTANCE_DIR, 'greenlens.db')}"
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # Security
+    SECRET_KEY = os.getenv("SECRET_KEY", "dev_secret")
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "supersecretkey")
+
     # JWT Configuration
-    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'jwt-secret-key-change-in-production'
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
-    
-    # File Upload Configuration
-    UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'uploads')
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
+
+    # Uploads
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-    
+
     # AI Configuration
-    OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-    GPT_MODEL = os.environ.get('GPT_MODEL', 'gpt-4-turbo')
-    GPT_TEMPERATURE = float(os.environ.get('GPT_TEMPERATURE', '0.7'))
-    GPT_MAX_TOKENS = int(os.environ.get('GPT_MAX_TOKENS', '500'))
-    
+    GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    GPT_MODEL = os.getenv("GPT_MODEL", "gpt-4-turbo")
+    GPT_TEMPERATURE = float(os.getenv("GPT_TEMPERATURE", "0.7"))
+    GPT_MAX_TOKENS = int(os.getenv("GPT_MAX_TOKENS", "500"))
+
     # CORS Configuration
-    FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://earthlens-opal.vercel.app/')
-    CORS_ORIGINS = [FRONTEND_URL, 'https://earthlens-opal.vercel.app/']
-    
+    FRONTEND_URL = os.getenv("FRONTEND_URL", "https://earthlens-opal.vercel.app/")
+    CORS_ORIGINS = [FRONTEND_URL, "https://earthlens-opal.vercel.app/"]
+
     # Logging
-    LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
-    
+    LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+
     # App Info
-    APP_NAME = 'EarthLens API'
-    VERSION = '1.0.0'
-
-
-class DevelopmentConfig(Config):
-    """Development configuration"""
-    DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or 'sqlite:///dev.db'
-    LOG_LEVEL = 'DEBUG'
+    APP_NAME = "EarthLens API"
+    VERSION = "1.0.0"
 
 
 class ProductionConfig(Config):
     """Production configuration"""
     DEBUG = False
-    # Handle Render's postgres:// vs postgresql:// URL format
-    database_url = os.environ.get('DATABASE_URL', 'sqlite:///earthlens.db')
-    if database_url.startswith('postgres://'):
-        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    database_url = os.environ.get("DATABASE_URL", f"sqlite:///{os.path.join(Config.INSTANCE_DIR, 'greenlens.db')}")
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
     SQLALCHEMY_DATABASE_URI = database_url
-    LOG_LEVEL = 'WARNING'
-
-
-class TestingConfig(Config):
-    """Testing configuration"""
-    TESTING = True
-    DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
-    WTF_CSRF_ENABLED = False
-    LOG_LEVEL = 'DEBUG'
+    LOG_LEVEL = "WARNING"
 
 
 def get_config(config_name):
     """Get configuration class by name"""
     config_map = {
-        'development': DevelopmentConfig,
-        'production': ProductionConfig,
-        'testing': TestingConfig,
-        'default': DevelopmentConfig
+        "production": ProductionConfig,
     }
-    
-    return config_map.get(config_name.lower(), DevelopmentConfig)
+    return config_map.get(config_name.lower(), Config)
