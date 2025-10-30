@@ -9,6 +9,71 @@ from app.database import db
 from app.config import get_config
 
 
+def create_app(config_name=None):
+    """Application factory pattern"""
+    app = Flask(__name__)
+    
+    # Load configuration
+    if config_name is None:
+        config_name = os.environ.get('FLASK_ENV', 'development')
+    
+    config = get_config(config_name)
+    app.config.from_object(config)
+    
+    # Setup logging
+    logging.basicConfig(
+        level=getattr(logging, app.config.get('LOG_LEVEL', 'INFO')),
+        format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
+    )
+    
+    # Initialize extensions
+    db.init_app(app)
+    migrate = Migrate(app, db)
+    jwt = JWTManager(app)
+    
+    # Setup CORS
+    CORS(app, resources={r"/api/*": {"origins": "*"}}, allow_headers=["Content-Type", "Authorization"], methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"], supports_credentials=True)
+    
+    # Register blueprints
+    register_blueprints(app)
+    
+    # Register error handlers
+    register_error_handlers(app)
+    
+    # Serve uploaded files
+    @app.route('/uploads/<path:filename>')
+    def serve_upload(filename):
+        from flask import send_from_directory
+        upload_folder = app.config.get('UPLOAD_FOLDER', os.path.join(os.path.dirname(__file__), '..', 'uploads'))
+        return send_from_directory(upload_folder, filename)
+    
+    # Health check endpoint
+    @app.route('/api/health')
+    def health_check():
+        return jsonify({
+            'status': 'healthy',
+            'message': 'EarthLens API is running',
+            'version': app.config.get('VERSION', '1.0.0'),
+            'environment': config_name
+        })
+    
+    @app.route('/')
+    def root():
+        return jsonify({
+            'message': 'Welcome to EarthLens API',
+            'version': app.config.get('VERSION', '1.0.0'),
+            'endpoints': {
+                'health': '/api/health',
+                'auth': '/api/auth',
+                'reports': '/api/reports',
+                'ai': '/api/ai',
+                'users': '/api/users'
+            }
+        })
+    
+    return app
+
+
 def register_blueprints(app):
     """Register all blueprints"""
     from app.routes.auth import auth_bp
@@ -30,8 +95,7 @@ def register_blueprints(app):
 
 def register_error_handlers(app):
     """Register error handlers"""
-    from flask import jsonify
-
+    
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({'error': 'Resource not found'}), 404
@@ -52,47 +116,3 @@ def register_error_handlers(app):
     def internal_error(error):
         db.session.rollback()
         return jsonify({'error': 'Internal server error'}), 500
-
-
-def create_app(config_name=None):
-    """Application factory pattern"""
-    app = Flask(__name__)
-    
-    # Load configuration
-    if config_name is None:
-        config_name = os.environ.get('FLASK_ENV', 'development')
-        if os.environ.get('RENDER') == 'true':
-            config_name = 'production'
-    
-    config = get_config(config_name)
-    app.config.from_object(config)
-    
-    # Setup logging
-    logging.basicConfig(
-        level=getattr(logging, app.config.get('LOG_LEVEL', 'INFO')),
-        format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
-    )
-    
-    # Initialize extensions
-    db.init_app(app)
-    Migrate(app, db)
-    JWTManager(app)
-    
-    # Setup CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}}, allow_headers=["Content-Type", "Authorization"], methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"], supports_credentials=True)
-    
-    # Register blueprints and error handlers
-    register_blueprints(app)
-    register_error_handlers(app)
-    
-    # Health check
-    @app.route('/api/health')
-    def health_check():
-        return jsonify({
-            'status': 'healthy',
-            'message': 'EarthLens API is running',
-            'version': app.config.get('VERSION', '1.0.0'),
-            'environment': config_name
-        })
-    
-    return app
