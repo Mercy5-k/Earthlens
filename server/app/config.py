@@ -24,8 +24,8 @@ class Config:
     GPT_MAX_TOKENS = int(os.environ.get('GPT_MAX_TOKENS', '500'))
     
     # CORS Configuration
-    FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:3000')
-    CORS_ORIGINS = [FRONTEND_URL, 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://127.0.0.1:5175']
+    FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://earthlens-opal.vercel.app/')
+    CORS_ORIGINS = [FRONTEND_URL, 'https://earthlens-opal.vercel.app/']
     
     # Logging
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
