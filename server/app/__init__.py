@@ -31,8 +31,15 @@ def create_app(config_name=None):
     migrate = Migrate(app, db)
     jwt = JWTManager(app)
     
-    # Setup CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}}, allow_headers=["Content-Type", "Authorization"], methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"], supports_credentials=True)
+    CORS(app, resources={
+        r"/api/*": {
+            "origins": [
+                "https://earthlens-opal.vercel.app",  # your deployed frontend
+            ],
+            "allow_headers": ["Content-Type", "Authorization"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+        }
+    }, supports_credentials=True)
     
     # Register blueprints
     register_blueprints(app)
@@ -57,6 +64,7 @@ def create_app(config_name=None):
             'environment': config_name
         })
     
+    # Root route
     @app.route('/')
     def root():
         return jsonify({
