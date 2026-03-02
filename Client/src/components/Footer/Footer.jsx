@@ -26,9 +26,15 @@ function Footer() {
           <p>Email: earthlens@gmail.com</p>
           <p>Phone: +254 700 000 000</p>
           <div className="footer-socials">
-            <img src={facebook} alt="Facebook" />
-            <img src={instagram} alt="Instagram" />
-            <img src={twitter} alt="Twitter" />
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+              <img src={facebook} alt="Facebook" />
+            </a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+              <img src={instagram} alt="Instagram" />
+            </a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+              <img src={twitter} alt="Twitter" />
+            </a>
           </div>
         </div>
       </div>
