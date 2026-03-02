@@ -34,7 +34,7 @@ def create_app(config_name=None):
     # Register blueprints first
     register_blueprints(app)
 
-    # ✅ Apply CORS *after* registering blueprints
+    # Apply CORS *after* registering blueprints
     CORS(app, resources={
         r"/api/*": {
             "origins": [
