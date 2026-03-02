@@ -1,4 +1,7 @@
 import './Footer.css'
+import facebook from '../../assets/facebook.jpg'
+import instagram from '../../assets/instagram.jpg'
+import twitter from '../../assets/twitter.jpg'
 
 function Footer() {
   return (
@@ -23,9 +26,9 @@ function Footer() {
           <p>Email: earthlens@gmail.com</p>
           <p>Phone: +254 700 000 000</p>
           <div className="footer-socials">
-            <img src="/facebook.jpg" alt="Facebook" />
-            <img src="/insta.jpg" alt="Instagram" />
-            <img src="/twitter.jpg" alt="Twitter" />
+            <img src={facebook} alt="Facebook" />
+            <img src={instagram} alt="Instagram" />
+            <img src={twitter} alt="Twitter" />
           </div>
         </div>
       </div>
