@@ -14,7 +14,7 @@ const Hero = () => {
           EarthLens simplifies environmental action into three key steps, 
           making it easy for anyone to contribute to a healthier planet.
         </p>
-        <a href="/join" className="join-btn">Join Now</a>
+        <Link to="/login">Join Now</Link>
       </div>
     </section>
   )
