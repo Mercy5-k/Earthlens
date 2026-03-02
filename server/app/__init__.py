@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager
@@ -12,48 +12,52 @@ from app.config import get_config
 def create_app(config_name=None):
     """Application factory pattern"""
     app = Flask(__name__)
-    
+
     # Load configuration
     if config_name is None:
         config_name = os.environ.get('FLASK_ENV', 'development')
-    
+
     config = get_config(config_name)
     app.config.from_object(config)
-    
+
     # Setup logging
     logging.basicConfig(
         level=getattr(logging, app.config.get('LOG_LEVEL', 'INFO')),
         format='[%(asctime)s] %(levelname)s in %(module)s: %(message)s'
     )
-    
+
     # Initialize extensions
     db.init_app(app)
-    migrate = Migrate(app, db)
-    jwt = JWTManager(app)
-    
+    Migrate(app, db)
+    JWTManager(app)
+
+    # Register blueprints first
+    register_blueprints(app)
+
+    # ✅ Apply CORS *after* registering blueprints
     CORS(app, resources={
         r"/api/*": {
             "origins": [
-                "https://earthlens-opal.vercel.app",  # your deployed frontend
+                "https://earthlens-opal.vercel.app",  # deployed frontend
+                "http://localhost:3000",              # local dev
             ],
             "allow_headers": ["Content-Type", "Authorization"],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
         }
     }, supports_credentials=True)
-    
-    # Register blueprints
-    register_blueprints(app)
-    
+
     # Register error handlers
     register_error_handlers(app)
-    
+
     # Serve uploaded files
     @app.route('/uploads/<path:filename>')
     def serve_upload(filename):
-        from flask import send_from_directory
-        upload_folder = app.config.get('UPLOAD_FOLDER', os.path.join(os.path.dirname(__file__), '..', 'uploads'))
+        upload_folder = app.config.get(
+            'UPLOAD_FOLDER',
+            os.path.join(os.path.dirname(__file__), '..', 'uploads')
+        )
         return send_from_directory(upload_folder, filename)
-    
+
     # Health check endpoint
     @app.route('/api/health')
     def health_check():
@@ -63,7 +67,7 @@ def create_app(config_name=None):
             'version': app.config.get('VERSION', '1.0.0'),
             'environment': config_name
         })
-    
+
     # Root route
     @app.route('/')
     def root():
@@ -78,7 +82,7 @@ def create_app(config_name=None):
                 'users': '/api/users'
             }
         })
-    
+
     return app
 
 
@@ -103,23 +107,23 @@ def register_blueprints(app):
 
 def register_error_handlers(app):
     """Register error handlers"""
-    
+
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({'error': 'Resource not found'}), 404
-    
+
     @app.errorhandler(400)
     def bad_request(error):
         return jsonify({'error': 'Bad request'}), 400
-    
+
     @app.errorhandler(401)
     def unauthorized(error):
         return jsonify({'error': 'Unauthorized'}), 401
-    
+
     @app.errorhandler(403)
     def forbidden(error):
         return jsonify({'error': 'Forbidden'}), 403
-    
+
     @app.errorhandler(500)
     def internal_error(error):
         db.session.rollback()

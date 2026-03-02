@@ -5,7 +5,7 @@ import {
   Route,
   useLocation,
   Outlet,
-  Navigate
+  Navigate,
 } from "react-router-dom";
 
 import Navbar from "./components/Navbar/Navbar.jsx";
@@ -23,7 +23,6 @@ import MyReportspage from "./pages/MyReportspage.jsx";
 import Profile from "./pages/Profile.jsx";
 import Contact from "./pages/Contact.jsx";
 
-
 const DashboardLayout = () => (
   <div style={{ display: "flex", minHeight: "100vh" }}>
     <Sidebar />
@@ -37,12 +36,17 @@ const AppContent = () => {
   const location = useLocation();
   const isAuthenticated = !!localStorage.getItem("token");
 
- 
   const showFooterPages = ["/", "/about", "/contact", "/green-actions"];
   const shouldShowFooter = showFooterPages.includes(location.pathname);
 
- 
-  const hideNavbarPages = ["/dashboard", "/report", "/my-reports", "/profile"];
+  const hideNavbarPages = [
+    "/dashboard",
+    "/report",
+    "/my-reports",
+    "/profile",
+    "/login",
+    "/join",
+  ];
   const shouldShowNavbar = !hideNavbarPages.includes(location.pathname);
 
   return (
@@ -51,25 +55,25 @@ const AppContent = () => {
 
       <main className="main-content">
         <Routes>
-
-        
           <Route path="/" element={<LandingPage />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/join" element={<Signup />} />
           <Route path="/login" element={<Login />} />
 
-          
           <Route
             path="/green-actions"
-            element={isAuthenticated ? <GreenActions /> : <Navigate to="/login" />}
+            element={
+              isAuthenticated ? <GreenActions /> : <Navigate to="/login" />
+            }
           />
 
-    
           <Route element={<DashboardLayout />}>
             <Route
               path="/dashboard"
-              element={isAuthenticated ? <Dashboard /> : <Navigate to="/login" />}
+              element={
+                isAuthenticated ? <Dashboard /> : <Navigate to="/login" />
+              }
             />
             <Route
               path="/report"
@@ -77,14 +81,15 @@ const AppContent = () => {
             />
             <Route
               path="/my-reports"
-              element={isAuthenticated ? <MyReportspage /> : <Navigate to="/login" />}
+              element={
+                isAuthenticated ? <MyReportspage /> : <Navigate to="/login" />
+              }
             />
             <Route
               path="/profile"
               element={isAuthenticated ? <Profile /> : <Navigate to="/login" />}
             />
           </Route>
-
         </Routes>
       </main>
 
